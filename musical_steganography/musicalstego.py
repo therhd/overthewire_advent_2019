@@ -1,16 +1,3 @@
-# G Major Scale: G, A, B, C, D, E, and F♯
-# Base 7 - Septenary
-
-# G  =  0
-# A  =  1
-# B  =  2
-# C  =  3
-# D  =  4
-# E  =  5
-# F# =  6
-
-# format: AOTW{flag}
-
 from mido import MidiFile
 import mido as mido
 
@@ -37,6 +24,8 @@ def sept_to_dec(sept_list):
         final.append(result)
 
     return final
+
+gmaj = {0: 'G', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F#'}
 
 def sept_to_gmaj(num_list):
     final = []
@@ -75,9 +64,6 @@ def dec_to_char(dec_list):
 def split(word):
     return [char for char in word]
 
-chromatic_scale = {0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E', 5: 'F', 6: 'F#', 7: 'G', 8: 'G#', 9: 'A', 10: 'A#', 11: 'B'}
-gmaj = {0: 'G', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F#'}
-
 # Testng
 # notes = 'ABBADBAEGAECBCD' # beginning to 28 bar 1
 # notes = split(notes)
@@ -89,22 +75,28 @@ gmaj = {0: 'G', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F#'}
 #         notes.append(chromatic_scale.get(msg.note % 12))
 
 # Working from challenge provided midi file, attempting to find extra data bits by rhythm
-notes = []
+
+chromatic_scale = {0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E', 5: 'F', 6: 'F#', 7: 'G', 8: 'G#', 9: 'A', 10: 'A#', 11: 'B'}
+
 midi_file = MidiFile('Stegno.mid')
 # midi_file = MidiFile('databits.mid')
 track = mido.merge_tracks(midi_file.tracks)
-ticks_beat = midi_file.ticks_per_beat
+ticks_per_beat = midi_file.ticks_per_beat
 
-tempo = 0
 notes = []
 play_time = 0
 for msg in track:
-    msg_dict = msg.dict()
-    play_time += msg_dict.get('time')
-    if msg_dict.get('type') == 'set_tempo':
-        tempo = msg_dict.get('tempo')
-    if msg_dict.get('velocity') != 0 and msg_dict.get('type') == 'note_on' and (play_time % ticks_beat)/(ticks_beat/4) % 2 != 0:
-        notes.append(chromatic_scale.get(msg_dict.get('note') % 12))
+    m = msg.dict()
+    play_time += m.get('time')
+
+    # each beat is a quarter note, we care about eighth notes
+    eighths = (play_time % ticks_per_beat)/(ticks_per_beat/4) 
+
+    # Pick odd eighth notes
+    if (m.get('type') == 'note_on'
+    and m.get('velocity') != 0
+    and (eighths % 2) != 0):
+        notes.append(chromatic_scale.get(m.get('note') % 12))
 
 # Decoding
 print('Selected notes by rhythm : {}'.format(', '.join(notes)))
