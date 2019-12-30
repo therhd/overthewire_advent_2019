@@ -109,3 +109,68 @@ notes = sept_to_gmaj(septenary)
 > ['A', 'B', 'B', 'A', 'D', 'B', 'A', 'E', 'G', 'A', 'E', 'C', 'B', 'C', 'D']
 
 After walking through the "data notes" identified manually, I was able to confirm this encoding method produced the same result as the provided music.
+
+## Selecting data notes using mido
+
+On my initial solve, I manually filtered the midi file to contain only "data notes". After solving for points, I went back and wrote a function to select the off-beat data notes from the midi file.
+
+Midi files contain a series of messages (instructions).
+
+
+
+```
+{'type': 'time_signature', 'numerator': 4, 'denominator': 4, 'clocks_per_click': 24, 'notated_32nd_notes_per_beat': 8, 'time': 0}
+{'type': 'key_signature', 'key': 'G', 'time': 0}
+{'type': 'set_tempo', 'tempo': 545455, 'time': 0}
+{'type': 'note_on', 'time': 0, 'channel': 1, 'note': 40, 'velocity': 80}
+{'type': 'note_on', 'time': 227, 'channel': 0, 'note': 71, 'velocity': 0}
+{'type': 'note_on', 'time': 253, 'channel': 0, 'note': 69, 'velocity': 80}
+{'type': 'note_on', 'time': 227, 'channel': 0, 'note': 69, 'velocity': 0}
+```
+There are many midi message types: time_signature, key_signature, set_tempo, *_change, **note_on**, note_off, etc.
+
+All midi messages have a **time** value, which is the number of **ticks** since the last message.
+
+**note_on** messages have:
+
+time|channel|note|velocity|
+|-|-|-|-|
+|ticks since last message|which voice/instrument|integer value of note on chromatic scale|force/loudness|
+
+
+
+But we still need to know how many ticks per beat.
+With the mido library, we can determine how many **ticks** per **beat (quarter note)** using:
+```python
+    midi_file = MidiFile(midi_file)
+    ticks_per_beat = midi_file.ticks_per_beat
+```
+
+> 480
+
+```python
+chromatic_scale = {0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E', 5: 'F', 6: 'F#', 7: 'G', 8: 'G#', 9: 'A', 10: 'A#', 11: 'B'}
+
+def select_notes_from_file(midi_file):
+    midi_file = MidiFile(midi_file)
+    track = mido.merge_tracks(midi_file.tracks)
+    ticks_per_beat = midi_file.ticks_per_beat
+
+    notes = []
+    play_time = 0
+    for msg in track:
+        m = msg.dict()
+        play_time += m.get('time')
+
+        # each beat is a quarter note, we care about eighth notes
+        eighths = (play_time % ticks_per_beat)/(ticks_per_beat/4) 
+
+        # Pick odd eighth notes
+        if (m.get('type') == 'note_on'
+        and m.get('velocity') != 0
+        and (eighths % 2) != 0):
+            notes.append(chromatic_scale.get(m.get('note') % 12))
+    return notes
+
+notes = select_notes_from_file('Stegno.mid')
+```
