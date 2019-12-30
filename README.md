@@ -49,8 +49,8 @@ We can treat notes in the G Major Scale as base 7, starting with G = 0
 ## Replicating encoding
 Since the hints told us "AOTW{" is encoded in the music, I decided to try to reproduce the encoding in python to verify my guess about the rhythm.
 
+### Convert flag text into list of characters
 ```python
-# Convert flag text into list of characters
 flag = split("AOTW{")
 
 def split(word):
@@ -61,8 +61,8 @@ flag = split(flag)
 
 > ['A', 'O', 'T', 'W', '{']
 
+### Convert list of characters into list of ascii decimal values
 ```python
-# Convert list of characters into list of ascii decimal values
 def char_to_dec(char_list): 
     final = []
     for char in char_list:
@@ -74,10 +74,11 @@ decimal = char_to_dec(flag)
 
 > [65, 79, 84, 87, 123]
 
+### Convert list of ascii decimal values to septenary (base 7) values.
+It's important to note it required 3 base 7 digits for ascii values.
+When decoding later, make sure to use 3 digits when calculating the decimal value.
+
 ```python
-# Convert list of ascii decimal values to septenary (base 7) values.
-# It's important to note it required 3 base 7 digits for ascii values.
-# When decoding later, make sure to use 3 digits.
 def dec_to_sept(num_list): 
     final = []
     for num in num_list:
@@ -94,8 +95,8 @@ septenary = dec_to_sept(decimal)
 
 > ['122', '142', '150', '153', '234']
 
+### Convert list of base 7 ascii values to G Major scale notes.
 ```python
-# Convert list of base 7 ascii values to G Major scale notes.
 gmaj = {0: 'G', 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F#'}
 
 def sept_to_gmaj(num_list):
@@ -109,4 +110,4 @@ notes = sept_to_gmaj(septenary)
 ```
 > ['A', 'B', 'B', 'A', 'D', 'B', 'A', 'E', 'G', 'A', 'E', 'C', 'B', 'C', 'D']
 
-After walking through the "data notes" identified manually, I was able to confirm this encoding method produced the same result.
+After walking through the "data notes" identified manually, I was able to confirm this encoding method produced the same result as the provided music.
