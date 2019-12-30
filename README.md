@@ -13,7 +13,6 @@ Of the hints, most importantly:
 > The flag format is AOTW{} and **that wrapper part is embedded in the music** as well.
 
 
----
 ## On Musical Scales
 Chromatic Scale (12 Notes):
 > C, C#, D, D#, E, F, F#, G, G#, A, A#, B
@@ -36,7 +35,6 @@ We can treat notes in the G Major Scale as base 7, starting with G = 0
 |C|  |D|  |E| |F#|G|  |A|  |B|C|  |D|  |E| |F#|
 |3|  |4|  |5| |6 |0|  |1|  |2|3|  |4|  |5| |6 |
 
----
 ## On Musical Rhythm
 ![Ableton Piano Roll](musical_steganography/screenshots/Duple_note_values_comparison.png)
 
