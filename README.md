@@ -187,7 +187,7 @@ def select_notes_from_file(midi_file):
 
         if (m.get('type') == 'note_on'
         and m.get('velocity') != 0
-        and (sixteenth % 2) != 0): # Select only odd-numbered sixteenth notes
+        and (sixteenth % 2)): # Select only odd-numbered sixteenth notes
             notes.append(chromatic_scale.get(m.get('note') % 12))
     return notes
 ```
