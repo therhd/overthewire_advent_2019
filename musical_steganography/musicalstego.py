@@ -37,13 +37,10 @@ def sept_to_gmaj(num_list):
 def gmaj_to_sept(note_list):
     gmaj_r = {v: k for k, v in gmaj.items()} # Reverse keys and values of gmaj dict
     final = []
-    int = 0
     sept = ''
     for note in note_list:
-        int += 1
         sept += str(gmaj_r.get(note))
-        if int == 3:
-            int = 0
+        if len(sept) == 3:
             final.append(sept)
             sept = ''
     return final
