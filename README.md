@@ -229,8 +229,6 @@ def gmaj_to_sept(note_list):
             final.append(sept)
             sept = ''
     return final
-            
-
 
 def dec_to_char(dec_list):
     final = []
