@@ -89,13 +89,13 @@ def select_notes_from_file(midi_file):
         m = msg.dict()
         play_time += m.get('time')
 
-        # each beat is a quarter note, we care about eighth notes
-        eighths = (play_time % ticks_per_beat)/(ticks_per_beat/4) 
+        # each beat is a quarter note, we care about sixteenth notes
+        sixteenth = (play_time % ticks_per_beat)/(ticks_per_beat/4) 
 
         # Pick odd eighth notes
         if (m.get('type') == 'note_on'
         and m.get('velocity') != 0
-        and (eighths % 2) != 0):
+        and (sixteenth % 2) != 0):
             notes.append(chromatic_scale.get(m.get('note') % 12))
     return notes
 
