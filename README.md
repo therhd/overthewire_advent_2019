@@ -185,7 +185,6 @@ def select_notes_from_file(midi_file):
         # each beat is a quarter note, we care about sixteenth notes
         sixteenth = (play_time % ticks_per_beat)/(ticks_per_beat/4) 
 
-        # Pick odd eighth notes
         if (m.get('type') == 'note_on'
         and m.get('velocity') != 0
         and (sixteenth % 2) != 0): # Select only odd-numbered sixteenth notes
